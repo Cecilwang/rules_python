@@ -134,7 +134,18 @@ class Wheel(object):
   def _parse_metadata(self, content):
     # TODO: handle fields other than just name
     name_pattern = re.compile('Name: (.*)')
-    return { 'name': name_pattern.search(content).group(1) }
+    name = name_pattern.search(content).group(1)
+    if name in ["matplotlib"]:
+      run_requires_pattern = re.compile('Requires-Dist: (.*)')
+      run_requires = [{
+        'requires': [x for x in run_requires_pattern.findall(content)]
+      }]
+    else:
+      run_requires = []
+    return {
+      'name': name,
+      'run_requires': run_requires
+    }
 
 
 parser = argparse.ArgumentParser(
